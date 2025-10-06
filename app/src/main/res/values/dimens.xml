@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="btn_size">32dp</dimen>
+<!--    wrap_content-->
+    <dimen name="btn_size">80dp</dimen>
+    <dimen name="btn_text_size">23sp</dimen>
     <dimen name="corner_radius">64dp </dimen>
     <dimen name="layout_margin">10px</dimen>
+    <dimen name="main_padding">0px</dimen>
 
+    <dimen name="layout_padding">20px</dimen>
 </resources>
