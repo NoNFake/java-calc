@@ -10,10 +10,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -30,6 +28,14 @@ public class MainActivity extends AppCompatActivity {
     private double result;
     private static final String TAG = "MyActivity";
 
+
+    private String currentInput = "";
+    private String operator = "";
+    private double firstNumber = 0;
+    private boolean isNewInput = true;
+    boolean isOperator;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,8 +43,14 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        textView = findViewById(R.id.textView);
+        iniViews();
+        setupButtons();
+        setupOperatrs();
+        setupSpecialButtons();
+    }
 
+    private void iniViews() {
+        textView = findViewById(R.id.textView);
         button_ac = findViewById(R.id.button_ac);
         button_del = findViewById(R.id.button_del);
         button_precent = findViewById(R.id.button_precent);
@@ -59,7 +71,9 @@ public class MainActivity extends AppCompatActivity {
         button7 = findViewById(R.id.button7);
         button8 = findViewById(R.id.button8);
         button9 = findViewById(R.id.button9);
+    }
 
+    private void setupButtons() {
         // Set click listeners for all number buttons
         setButtonClickListener(button0, "0");
         setButtonClickListener(button1, "1");
@@ -71,7 +85,9 @@ public class MainActivity extends AppCompatActivity {
         setButtonClickListener(button7, "7");
         setButtonClickListener(button8, "8");
         setButtonClickListener(button9, "9");
+    }
 
+    private void setupOperatrs() {
         // Set click listeners for operator buttons
         setButtonClickListener(button_add, "+");
         setButtonClickListener(button_sub, "-");
@@ -80,44 +96,150 @@ public class MainActivity extends AppCompatActivity {
         setButtonClickListener(button_dot, ".");
         setButtonClickListener(button_precent, "%");
 
-
-        // Set click listeners for special buttons
-        button_ac.setOnClickListener(v -> textView.setText(""));
-//        button_equ.setOnClickListener(v -> );
-        button_del.setOnClickListener(v -> {
-            String current = textView.getText().toString();
-            if(!current.isEmpty()) {
-                textView.setText(
-                        current.substring(
-                                0,
-                                current.length() - 1
-                        )
-                );
-            }
-        });
-
-
-        button_add.setOnClickListener( v -> {
-            String current = textView.getText().toString();
-
-        });
-//        EdgeToEdge.enable(this);
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
     }
+
+    private void setupSpecialButtons() {
+        button_ac.setOnClickListener(v -> clearAll());
+        button_del.setOnClickListener(v -> delLast());
+        button_equ.setOnClickListener(v -> calcResult());
+    }
+
+    private void clearAll() {
+        currentInput = "";
+        operator = "";
+        firstNumber = 0;
+        isNewInput = true;
+        textView.setText("");
+    }
+    private void delLast() {
+        Log.d(TAG, "CURRENTINPUT" + textView);
+
+
+//        if(!currentInput.isEmpty()) {
+//
+//            currentInput = textView.getText().toString();
+//            currentInput = currentInput.substring(0, currentInput.length() -1);
+//            textView.setText(currentInput);
+//
+//            if (currentInput.isEmpty()) {
+//                isNewInput = true;
+//            }
+
+        String text = textView.getText().toString();
+
+
+        if (!text.isEmpty()) {
+            text=text.substring(0, text.length()-1);
+            textView.setText(text);
+            currentInput=text;
+
+        }
+
+
+
+    }
+
+
+
+    private void calcResult() {
+        if (!operator.isEmpty() && !currentInput.isEmpty() && !isNewInput) {
+            double secondNum = Double.parseDouble(currentInput);
+            double result = calulation(firstNumber, secondNum, operator);
+
+            String resultText = formatResult(result);
+            textView.setText(resultText);
+
+            currentInput = resultText;
+            operator = "";
+            isNewInput = true;
+
+
+            textView.setText(resultText);
+
+
+        }
+    }
+
+
+    private double calulation(double first, double second, String operator){
+        switch (operator) {
+            case  "+":
+                return first + second;
+            case  "-":
+                return first - second;
+            case  "×":
+                return first * second;
+            case  "÷":
+                if (second == 0){
+                    return second;
+                }
+                return first / second;
+
+
+            default:
+                return  second;
+
+        }
+
+
+    }
+
+    private String formatResult( double result ) {
+        if (result == (long) result) {
+            return String.valueOf((long) result);
+        } else {
+            return String.format(
+                    "%.10f", result
+            ).replaceAll(
+                    "0^$", ""
+            ).replaceAll(
+                    "\\.$", "");
+        }
+    }
+
 
     private void setButtonClickListener(Button button, String value) {
         button.setOnClickListener(v -> {
             String current = textView.getText().toString();
+            isOperator =
+                       value.equals("+")
+                    || value.equals("-")
+                    || value.equals("×")
+                    || value.equals("÷")
+                    || value.equals(".")
+                    || value.equals("%");
 
+
+
+            if( current.isEmpty() && isOperator) {
+                return;
+            }
+
+            if (!current.isEmpty() && isOperator && islastCharOperator(current)) {
+//                return;
+                current = current.substring(0, current.length() - 1);
+            }
             textView.setText(current + value);
-            Log.d(TAG, "TextView value: " + textView.getText().toString());
 
-            Log.d(TAG, "TextView value: " + textView.getText());
+
+
+
+            Log.d(TAG, "TextView value: " + current);
+
         });
+    }
+
+    private boolean islastCharOperator(String text) {
+        if (text.isEmpty()) return false;
+
+        char lastChar = text.charAt(text.length() - 1 );
+        return lastChar == '+'
+                || lastChar == '-'
+                || lastChar == '×'
+                || lastChar == '÷'
+                || lastChar == '%'
+                || lastChar == '.';
+
     }
 
     //    eq
