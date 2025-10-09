@@ -114,19 +114,7 @@ public class MainActivity extends AppCompatActivity {
     private void delLast() {
         Log.d(TAG, "CURRENTINPUT" + textView);
 
-
-//        if(!currentInput.isEmpty()) {
-//
-//            currentInput = textView.getText().toString();
-//            currentInput = currentInput.substring(0, currentInput.length() -1);
-//            textView.setText(currentInput);
-//
-//            if (currentInput.isEmpty()) {
-//                isNewInput = true;
-//            }
-
         String text = textView.getText().toString();
-
 
         if (!text.isEmpty()) {
             text=text.substring(0, text.length()-1);
@@ -134,17 +122,26 @@ public class MainActivity extends AppCompatActivity {
             currentInput=text;
 
         }
-
-
-
     }
 
-
-
     private void calcResult() {
-        if (!operator.isEmpty() && !currentInput.isEmpty() && !isNewInput) {
+        Log.d(TAG, "calcResult: " + operator);
+        Log.d(TAG, "calcResult: " + currentInput);
+        Log.d(TAG, "calcResult: " + isNewInput);
+
+
+
+
+//        if (!operator.isEmpty() && !currentInput.isEmpty() && !isNewInput) {
+//        if (!currentInput.isEmpty()) {
+
             double secondNum = Double.parseDouble(currentInput);
-            double result = calulation(firstNumber, secondNum, operator);
+
+            Log.d(TAG, "calcResult: firstnum" + firstNumber);
+            Log.d(TAG, "calcResult: secondNum" + secondNum);
+//            double result = calulation(firstNumber, secondNum, operator);
+
+
 
             String resultText = formatResult(result);
             textView.setText(resultText);
@@ -153,11 +150,9 @@ public class MainActivity extends AppCompatActivity {
             operator = "";
             isNewInput = true;
 
-
             textView.setText(resultText);
 
-
-        }
+//        }
     }
 
 
@@ -216,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (!current.isEmpty() && isOperator && islastCharOperator(current)) {
-//                return;
                 current = current.substring(0, current.length() - 1);
             }
             textView.setText(current + value);

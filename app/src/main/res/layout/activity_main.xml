@@ -323,7 +323,7 @@
                 android:backgroundTint="@color/eq_btn"
                 android:text="="
 
-                                android:textColor="#FFFFFF"
+                android:textColor="#FFFFFF"
 
                 android:textSize="@dimen/btn_text_size" />
 
